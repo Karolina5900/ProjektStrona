@@ -1,0 +1,3 @@
+# Elo mordy
+
+## tracimy czas

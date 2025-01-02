@@ -19,6 +19,17 @@
             <label class="form-label">Tytuł ogłoszenia</label>
             <input type="text" class="form-control" name="item_text">
         </div>
+
+         <!-- Formularz wyboru kategorii -->
+         <div class="mb-3">
+            <label class="form-label">Wybierz kategorię</label>
+            <select name="category" class="form-control" required>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
         <button type="submit" class="btn btn-primary mb-3">Dodaj ogłoszenie</button>
     </form>
     

@@ -2,7 +2,7 @@
 
 co to jest...
 
-## to jest pierwsze uruchomienie 
+## Pierwsze uruchomienie 
 
 ```bash
 py -m venv venv -> stworzenie venva

@@ -6,22 +6,20 @@
             <p>
                 {{ ad.title }}
                 {% if ad.sold %}
-                    ✅ Sprzedane
+                     ❌ Sprzedane
                 {% else %}
-                    ❌ Dostępne
+                    ✅  Dostępne
                 {% endif %}
             </p>
         {% endfor %}
     </div>
 
-    <form method="post" action="{{ url_for("add") }}">
-
+    <form method="post" action="{{ url_for('add') }}">
         <div class="mb-3">
-            <label class="form-label">
-                Tytuł ogłoszenia
-            </label>
+            <label class="form-label">Tytuł ogłoszenia</label>
             <input type="text" class="form-control" name="item_text">
         </div>
         <button type="submit" class="btn btn-primary mb-3">Dodaj ogłoszenie</button>
     </form>
+    
 {% endblock %}

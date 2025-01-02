@@ -28,7 +28,7 @@ categories_olxs = db.Table(
 class Olx(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False, default="Brak opisu")
     category = db.relationship('Category', secondary=categories_olxs, backref=db.backref('olxs'))
     sold = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.String(255), db.ForeignKey('user.fs_uniquifier'))
@@ -72,7 +72,8 @@ def index():
 @login_required
 def add():
     new_task = Olx(
-        title=request.form["item_text"],
+         title=request.form.get("item_text", "Bez tytułu"),  # Domyślna wartość, jeśli brak w formularzu
+        description=request.form.get("description", "Brak opisu"),  # Opcjonalne pole
         user_id=current_user.get_id()
     )
     db.session.add(new_task)

@@ -2,13 +2,13 @@
 
 {% block content %}
     <div>
-        {% for el in todo_list %}
+        {% for ad in ads %}
             <p>
-                {{ el.title }}
-                {% if el.completed %}
-                    ✅
+                {{ ad.title }}
+                {% if ad.sold %}
+                    ✅ Sprzedane
                 {% else %}
-                    ❌
+                    ❌ Dostępne
                 {% endif %}
             </p>
         {% endfor %}
@@ -18,10 +18,10 @@
 
         <div class="mb-3">
             <label class="form-label">
-                Rzecz do zrobienia
+                Tytuł ogłoszenia
             </label>
             <input type="text" class="form-control" name="item_text">
         </div>
-        <button type="submit" class="btn btn-primary mb-3">Dodaj do listy</button>
+        <button type="submit" class="btn btn-primary mb-3">Dodaj ogłoszenie</button>
     </form>
 {% endblock %}

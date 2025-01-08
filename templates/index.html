@@ -1,46 +1,57 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div>
-        {% for ad in ads %}
-            <p>
-                {{ ad.title }}
-                {% if ad.sold %}
-                     ❌ Sprzedane
-                {% else %}
-                    ✅  Dostępne
-                {% endif %}
-            </p>
-        {% endfor %}
-    </div>
+<div>
+    <!-- Iteracja po wszystkich ogłoszeniach -->
+    {% for ad in ads %}
+        <div class="ad-item">
+            <h3>{{ ad.title }}</h3>
 
+            <!-- Zachowanie fragmentu, który podałeś -->
+            {% if ad.sold %}
+                <p>❌ Sprzedane</p>
+            {% else %}
+                <p>✅ Dostępne</p>
+            {% endif %}
+
+            <p>{{ ad.description }}</p>
+            <!-- <p><strong>Kategoria:</strong> {{ ad.category.name }}</p> -->
+
+            <!-- Formularz do zmiany statusu ogłoszenia -->
+            <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
+                <button type="submit" class="btn btn-primary">
+                    {% if ad.sold %}
+                        Zmień na dostępne
+                    {% else %}
+                        Zmień na sprzedane
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    {% endfor %}
+</div>
+
+<div>
+    <!-- Formularz do dodania nowego ogłoszenia -->
+    <h2>Dodaj nowe ogłoszenie</h2>
     <form method="post" action="{{ url_for('add') }}">
         <div class="mb-3">
-            <label class="form-label">Tytuł ogłoszenia</label>
-            <input type="text" class="form-control" name="item_text">
+            <label class="form-label" for="item_text">Tytuł ogłoszenia</label>
+            <input type="text" class="form-control" id="item_text" name="item_text" required>
         </div>
-        <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
-            <button type="submit" class="btn btn-warning">
-                {% if ad.sold %}
-                    Zmiana na Dostępne
-                {% else %}
-                    Zmiana na Sprzedane
-                {% endif %}
-            </button>
-        </form>
-            
-
-         <!-- Formularz wyboru kategorii -->
-         <div class="mb-3">
-            <label class="form-label">Wybierz kategorię</label>
-            <select name="category" class="form-control" required>
+        <div class="mb-3">
+            <label class="form-label" for="description">Opis ogłoszenia</label>
+            <textarea class="form-control" id="description" name="description" required></textarea>
+        </div>
+        <!-- <div class="mb-3">
+            <label class="form-label" for="category">Wybierz kategorię</label>
+            <select name="category" class="form-control" id="category" required>
                 {% for category in categories %}
                     <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
-        </div>
-        
-        <button type="submit" class="btn btn-primary mb-3">Dodaj ogłoszenie</button>
+        </div> -->
+        <button type="submit" class="btn btn-primary">Dodaj ogłoszenie</button>
     </form>
-    
+</div>
 {% endblock %}

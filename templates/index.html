@@ -15,7 +15,13 @@
             {% endif %}
 
             <p>{{ ad.description }}</p>
-            <!-- <p><strong>Kategoria:</strong> {{ ad.category.name }}</p> -->
+
+            <!-- Wyświetlanie kategorii, uwzględniając możliwość wielu kategorii -->
+            <p><strong>Kategoria:</strong>
+                {% for cat in ad.category %}
+                    {{ cat.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </p>
 
             <!-- Formularz do zmiany statusu ogłoszenia -->
             <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
@@ -43,14 +49,14 @@
             <label class="form-label" for="description">Opis ogłoszenia</label>
             <textarea class="form-control" id="description" name="description" required></textarea>
         </div>
-        <!-- <div class="mb-3">
+        <div class="mb-3">
             <label class="form-label" for="category">Wybierz kategorię</label>
             <select name="category" class="form-control" id="category" required>
                 {% for category in categories %}
                     <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
-        </div> -->
+        </div>
         <button type="submit" class="btn btn-primary">Dodaj ogłoszenie</button>
     </form>
 </div>

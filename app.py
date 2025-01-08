@@ -40,8 +40,11 @@ class Role(db.Model, RoleMixin):
 
 class Category(db.Model, RoleMixin):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), unique=True)
+    name = db.Column(db.String(32), unique=True, nullable=False)
     description = db.Column(db.String(128))
+
+    def __repr__(self):
+        return f'<Category {self.name}>'
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -63,52 +66,56 @@ security = Security(app, user_datastore)
 
 
 # Routes
-@app.route('/', methods=["GET", "POST"])
+@app.route('/')
 def index():
-    ads = Olx.query.all()  # Pobranie wszystkich ogłoszeń
-    categories = Category.query.all()  # Pobranie wszystkich dostępnych kategorii
-    if request.method == "POST":
-        # Pobieranie danych z formularza
-        title = request.form.get("item_text")
-        category_id = request.form.get("category")
-
-        # Tworzenie nowego ogłoszenia
-        new_ad = Olx(
-            title=title,
-            category=[Category.query.get(category_id)],  # Przypisanie kategorii
-            user_id=current_user.get_id()
-        )
-        db.session.add(new_ad)
-        db.session.commit()
-
-        return redirect(url_for("index"))
-
+    ads = Olx.query.all()
+    categories = Category.query.all() 
     return render_template('index.html', ads=ads, categories=categories)
-
 
 @app.route("/add-olx", methods=["POST"])
 @login_required
 def add():
+    title = request.form.get("item_text", "Bez tytułu")
+    description = request.form.get("description", "Brak opisu")
+    category_id = request.form.get("category")  # Pobierz ID wybranej kategorii
+
+    # Jeśli brak kategorii, wróć do strony głównej
+    if not category_id:
+        return redirect(url_for("index"))
+        
+    category = Category.query.get_or_404(int(category_id))
+    # Przypisz kategorię do ogłoszenia
     new_task = Olx(
-         title=request.form.get("item_text", "Bez tytułu"),  # Domyślna wartość, jeśli brak w formularzu
-        description=request.form.get("description", "Brak opisu"),  # Opcjonalne pole
+        title=title,
+        description=description,
+        category=[category],  # Powiąż ogłoszenie z kategorią
         user_id=current_user.get_id()
     )
     db.session.add(new_task)
     db.session.commit()
     return redirect(url_for("index"))
-    
+
+
+@app.before_request
+def create_default_categories():
+    if Category.query.count() == 0:
+        categories = ['Elektronika', 'Motoryzacja', 'Nieruchomości', 'Usługi', 'Praca', 'Różne']
+        for category_name in categories:
+            category = Category(name=category_name)
+            db.session.add(category)
+        db.session.commit()
+
+
 @app.route('/toggle_sold/<int:ad_id>', methods=["POST"])
 @login_required
 def toggle_sold(ad_id):
     ad = Olx.query.get_or_404(ad_id)
     if ad.user_id != current_user.get_id():
         return redirect(url_for('index'))
-
+    
     ad.sold = not ad.sold  # Zmiana statusu
     db.session.commit()
     return redirect(url_for('index'))
-
 
 # @app.route('/register', methods=['GET', 'POST'])
 # def register():

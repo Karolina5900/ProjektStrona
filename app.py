@@ -97,6 +97,18 @@ def add():
     db.session.add(new_task)
     db.session.commit()
     return redirect(url_for("index"))
+    
+@app.route('/toggle_sold/<int:ad_id>', methods=["POST"])
+@login_required
+def toggle_sold(ad_id):
+    ad = Olx.query.get_or_404(ad_id)
+    if ad.user_id != current_user.get_id():
+        return redirect(url_for('index'))
+
+    ad.sold = not ad.sold  # Zmiana statusu
+    db.session.commit()
+    return redirect(url_for('index'))
+
 
 # @app.route('/register', methods=['GET', 'POST'])
 # def register():

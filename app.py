@@ -63,10 +63,28 @@ security = Security(app, user_datastore)
 
 
 # Routes
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 def index():
-    ads = Olx.query.all()
-    return render_template('index.html', ads=ads)
+    ads = Olx.query.all()  # Pobranie wszystkich ogłoszeń
+    categories = Category.query.all()  # Pobranie wszystkich dostępnych kategorii
+    if request.method == "POST":
+        # Pobieranie danych z formularza
+        title = request.form.get("item_text")
+        category_id = request.form.get("category")
+
+        # Tworzenie nowego ogłoszenia
+        new_ad = Olx(
+            title=title,
+            category=[Category.query.get(category_id)],  # Przypisanie kategorii
+            user_id=current_user.get_id()
+        )
+        db.session.add(new_ad)
+        db.session.commit()
+
+        return redirect(url_for("index"))
+
+    return render_template('index.html', ads=ads, categories=categories)
+
 
 @app.route("/add-olx", methods=["POST"])
 @login_required

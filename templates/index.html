@@ -19,6 +19,16 @@
             <label class="form-label">Tytuł ogłoszenia</label>
             <input type="text" class="form-control" name="item_text">
         </div>
+        <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
+            <button type="submit" class="btn btn-warning">
+                {% if ad.sold %}
+                    Zmiana na Dostępne
+                {% else %}
+                    Zmiana na Sprzedane
+                {% endif %}
+            </button>
+        </form>
+            
 
          <!-- Formularz wyboru kategorii -->
          <div class="mb-3">

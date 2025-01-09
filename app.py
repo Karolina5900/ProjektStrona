@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, UserMixin, RoleMixin, SQLAlchemyUserDatastore, current_user, login_required
+from flask_security import Security, UserMixin, RoleMixin, SQLAlchemyUserDatastore, current_user, login_required, logout_user
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///olx.db'
@@ -115,6 +115,12 @@ def toggle_sold(ad_id):
     
     ad.sold = not ad.sold  # Zmiana statusu
     db.session.commit()
+    return redirect(url_for('index'))
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
     return redirect(url_for('index'))
 
 # @app.route('/register', methods=['GET', 'POST'])

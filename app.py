@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, UserMixin, RoleMixin, SQLAlchemyUserDatastore, current_user, login_required
+from flask_security import Security, UserMixin, RoleMixin, SQLAlchemyUserDatastore, current_user, login_required, logout_user
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///olx.db'
@@ -29,6 +29,7 @@ class Olx(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False, default="Brak opisu")
+    price = db.Column(db.Float, nullable=False, default=0.0)  # Nowe pole
     category = db.relationship('Category', secondary=categories_olxs, backref=db.backref('olxs'))
     sold = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.String(255), db.ForeignKey('user.fs_uniquifier'))
@@ -77,6 +78,7 @@ def index():
 def add():
     title = request.form.get("item_text", "Bez tytułu")
     description = request.form.get("description", "Brak opisu")
+    price = request.form.get("price", 0.0)  # Pobranie ceny
     category_id = request.form.get("category")  # Pobierz ID wybranej kategorii
 
     # Jeśli brak kategorii, wróć do strony głównej
@@ -88,6 +90,7 @@ def add():
     new_task = Olx(
         title=title,
         description=description,
+        price=float(price),  # Konwersja ceny na liczbę
         category=[category],  # Powiąż ogłoszenie z kategorią
         user_id=current_user.get_id()
     )
@@ -115,6 +118,12 @@ def toggle_sold(ad_id):
     
     ad.sold = not ad.sold  # Zmiana statusu
     db.session.commit()
+    return redirect(url_for('index'))
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
     return redirect(url_for('index'))
 
 # @app.route('/register', methods=['GET', 'POST'])

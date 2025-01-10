@@ -2,12 +2,12 @@
 
 {% block content %}
 <div>
-    <!-- Iteracja po wszystkich ogłoszeniach -->
+    
     {% for ad in ads %}
         <div class="ad-item">
             <h3>{{ ad.title }}</h3>
 
-            <!-- Status ogłoszenia -->
+            
             {% if ad.sold %}
                 <p>❌ Sprzedane</p>
             {% else %}
@@ -16,17 +16,17 @@
 
             <p>{{ ad.description }}</p>
 
-            <!-- Wyświetlanie kategorii -->
+            
             <p><strong>Kategoria:</strong>
                 {% for cat in ad.category %}
                     {{ cat.name }}{% if not loop.last %}, {% endif %}
                 {% endfor %}
             </p>
 
-            <!-- Wyświetlanie ceny -->
+            
             <p><strong>Cena:</strong> {{ ad.price }} PLN</p>
 
-            <!-- Formularz do zmiany statusu ogłoszenia -->
+            
             <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
                 <button type="submit" class="btn btn-primary">
                     {% if ad.sold %}
@@ -41,7 +41,7 @@
 </div>
 
 <div>
-    <!-- Formularz do dodania nowego ogłoszenia -->
+    
     <h2>Dodaj nowe ogłoszenie</h2>
     <form method="post" action="{{ url_for('add') }}">
         <div class="mb-3">

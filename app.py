@@ -12,7 +12,7 @@ app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
 
 db = SQLAlchemy(app)
 
-# Model
+
 roles_user = db.Table(
     'roles_users',
     db.Column('user_id', db.ForeignKey('user.id')),
@@ -29,7 +29,7 @@ class Olx(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False, default="Brak opisu")
-    price = db.Column(db.Float, nullable=False, default=0.0)  # Nowe pole
+    price = db.Column(db.Float, nullable=False, default=0.0) 
     category = db.relationship('Category', secondary=categories_olxs, backref=db.backref('olxs'))
     sold = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.String(255), db.ForeignKey('user.fs_uniquifier'))
@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean, default=True)
     confirmed_at = db.Column(db.DateTime)
-    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)  # Wyamagane od wersji 4.0.0
+    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)  
     roles = db.relationship('Role', secondary=roles_user, backref=db.backref('users'))
 
     def __init__(self, **kwargs) -> None:
@@ -66,7 +66,7 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
 
-# Routes
+
 @app.route('/')
 def index():
     ads = Olx.query.all()
@@ -78,20 +78,20 @@ def index():
 def add():
     title = request.form.get("item_text", "Bez tytułu")
     description = request.form.get("description", "Brak opisu")
-    price = request.form.get("price", 0.0)  # Pobranie ceny
-    category_id = request.form.get("category")  # Pobierz ID wybranej kategorii
+    price = request.form.get("price", 0.0)  
+    category_id = request.form.get("category")  
 
-    # Jeśli brak kategorii, wróć do strony głównej
+    
     if not category_id:
         return redirect(url_for("index"))
         
     category = Category.query.get_or_404(int(category_id))
-    # Przypisz kategorię do ogłoszenia
+   
     new_task = Olx(
         title=title,
         description=description,
-        price=float(price),  # Konwersja ceny na liczbę
-        category=[category],  # Powiąż ogłoszenie z kategorią
+        price=float(price), 
+        category=[category], 
         user_id=current_user.get_id()
     )
     db.session.add(new_task)
@@ -116,7 +116,7 @@ def toggle_sold(ad_id):
     if ad.user_id != current_user.get_id():
         return redirect(url_for('index'))
     
-    ad.sold = not ad.sold  # Zmiana statusu
+    ad.sold = not ad.sold 
     db.session.commit()
     return redirect(url_for('index'))
 
@@ -125,52 +125,6 @@ def toggle_sold(ad_id):
 def logout():
     logout_user()
     return redirect(url_for('index'))
-
-# @app.route('/register', methods=['GET', 'POST'])
-# def register():
-#     if request.method == 'POST':
-#         username = request.form['username']
-#         password = request.form['password']
-#         hashed_password = password  # W produkcji należy użyć bcrypt do haszowania
-#         user = User(username=username, password=hashed_password)
-#         db.session.add(user)
-#         db.session.commit()
-#         return redirect(url_for('login'))
-#     return render_template('register.html')
-
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if request.method == 'POST':
-#         username = request.form['username']
-#         password = request.form['password']
-#         user = User.query.filter_by(username=username).first()
-#         if user and user.password == password:  # Porównanie w produkcji po haszowaniu
-#             login_user(user)
-#             return redirect(url_for('index'))
-#     return render_template('login.html')
-
-# @app.route('/logout')
-# def logout():
-#     logout_user()
-#     return redirect(url_for('index'))
-
-# @app.route('/add_ad', methods=['POST'])
-# @login_required
-# def add_ad():
-#     new_task = Add(
-#         title=request.form["item_text"],
-        
-#         user_id=current_user.get_id()
-#     )
-#     db.session.add(new_task)
-#     db.session.commit()
-#     return redirect(url_for("index"))
-
-# @app.route('/my_ads')
-# @login_required
-# def my_ads():
-#     ads = Add.query.filter_by(user_id=current_user.id).all()
-#     return render_template('my_ads.html', ads=ads)
 
 if __name__ == '__main__':
     with app.app_context():

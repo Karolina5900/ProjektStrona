@@ -47,6 +47,13 @@ class Category(db.Model, RoleMixin):
     def __repr__(self):
         return f'<Category {self.name}>'
 
+class CartItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(255), db.ForeignKey('user.fs_uniquifier'))
+    olx_id = db.Column(db.Integer, db.ForeignKey('olx.id'))
+    olx = db.relationship('Olx', backref='cart_items')
+    user = db.relationship('User', backref='cart_items')
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
@@ -107,6 +114,42 @@ def create_default_categories():
             category = Category(name=category_name)
             db.session.add(category)
         db.session.commit()
+
+@app.route('/add_to_cart/<int:ad_id>', methods=['POST'])
+@login_required
+def add_to_cart(ad_id):
+    ad = Olx.query.get_or_404(ad_id)
+    
+    
+    existing_item = CartItem.query.filter_by(user_id=current_user.get_id(), olx_id=ad_id).first()
+    if existing_item:
+        return redirect(url_for('index')) 
+    
+    if ad.user_id == current_user.get_id():
+        return redirect(url_for('index')) 
+
+    cart_item = CartItem(user_id=current_user.get_id(), olx_id=ad_id)
+    db.session.add(cart_item)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+@app.route('/cart')
+@login_required
+def view_cart():
+    cart_items = CartItem.query.filter_by(user_id=current_user.get_id()).all()
+    total_price = sum(item.olx.price for item in cart_items)
+
+    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
+
+@app.route('/remove_from_cart/<int:cart_item_id>', methods=['POST'])
+@login_required
+def remove_from_cart(cart_item_id):
+    cart_item = CartItem.query.get_or_404(cart_item_id)
+    if cart_item.user_id != current_user.get_id():
+        return redirect(url_for('view_cart'))
+    db.session.delete(cart_item)
+    db.session.commit()
+    return redirect(url_for('view_cart'))
 
 
 @app.route('/toggle_sold/<int:ad_id>', methods=["POST"])

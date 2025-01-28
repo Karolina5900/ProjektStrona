@@ -119,8 +119,15 @@ def create_default_categories():
 @login_required
 def add_to_cart(ad_id):
     ad = Olx.query.get_or_404(ad_id)
+    
+    
+    existing_item = CartItem.query.filter_by(user_id=current_user.get_id(), olx_id=ad_id).first()
+    if existing_item:
+        return redirect(url_for('index')) 
+    
     if ad.user_id == current_user.get_id():
-        return redirect(url_for('index'))  # Nie można dodać swojego przedmiotu do koszyka
+        return redirect(url_for('index')) 
+
     cart_item = CartItem(user_id=current_user.get_id(), olx_id=ad_id)
     db.session.add(cart_item)
     db.session.commit()

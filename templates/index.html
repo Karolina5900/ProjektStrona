@@ -27,6 +27,8 @@
                     </span>
                 </p>
             </div>
+
+            {% if current_user.is_authenticated and current_user.get_id() == ad.user_id %}
             <div class="card-footer text-center">
                 <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
                     <button type="submit" class="btn {% if ad.sold %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
@@ -34,6 +36,7 @@
                     </button>
                 </form>
             </div>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
@@ -65,4 +68,5 @@
         <button type="submit" class="btn btn-primary w-100">Dodaj ogłoszenie</button>
     </form>
 </div>
+
 {% endblock %}

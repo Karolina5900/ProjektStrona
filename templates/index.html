@@ -1,70 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div>
-    
+<div class="mb-5 text-center">
+    <h1 class="fw-bold">Znajdź lub dodaj ogłoszenie</h1>
+    <p class="text-muted">Twoje ulubione miejsce na zakupy i sprzedaż!</p>
+</div>
+
+<div class="row g-4">
     {% for ad in ads %}
-        <div class="ad-item">
-            <h3>{{ ad.title }}</h3>
-
-            
-            {% if ad.sold %}
-                <p>❌ Sprzedane</p>
-            {% else %}
-                <p>✅ Dostępne</p>
-            {% endif %}
-
-            <p>{{ ad.description }}</p>
-
-            
-            <p><strong>Kategoria:</strong>
-                {% for cat in ad.category %}
-                    {{ cat.name }}{% if not loop.last %}, {% endif %}
-                {% endfor %}
-            </p>
-
-            
-            <p><strong>Cena:</strong> {{ ad.price }} PLN</p>
-
-            
-            <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
-                <button type="submit" class="btn btn-primary">
-                    {% if ad.sold %}
-                        Zmień na dostępne
-                    {% else %}
-                        Zmień na sprzedane
-                    {% endif %}
-                </button>
-            </form>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">{{ ad.title }}</h5>
+                <p class="text-muted mb-2">
+                    <small>Kategoria: 
+                        {% for cat in ad.category %}
+                            {{ cat.name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </small>
+                </p>
+                <p>{{ ad.description }}</p>
+                <p class="fw-bold">Cena: {{ ad.price }} PLN</p>
+                <p>
+                    <span class="badge {% if ad.sold %}bg-danger{% else %}bg-success{% endif %}">
+                        {% if ad.sold %}Sprzedane{% else %}Dostępne{% endif %}
+                    </span>
+                </p>
+            </div>
+            <div class="card-footer text-center">
+                <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
+                    <button type="submit" class="btn {% if ad.sold %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
+                        {% if ad.sold %}Zmień na dostępne{% else %}Zmień na sprzedane{% endif %}
+                    </button>
+                </form>
+            </div>
         </div>
+    </div>
     {% endfor %}
 </div>
 
-<div>
-    
-    <h2>Dodaj nowe ogłoszenie</h2>
-    <form method="post" action="{{ url_for('add') }}">
+<div class="mt-5">
+    <h2 class="fw-bold mb-4">Dodaj nowe ogłoszenie</h2>
+    <form method="post" action="{{ url_for('add') }}" class="bg-white p-4 rounded shadow-sm">
         <div class="mb-3">
-            <label class="form-label" for="item_text">Tytuł ogłoszenia</label>
-            <input type="text" class="form-control" id="item_text" name="item_text" required>
+            <label for="item_text" class="form-label">Tytuł ogłoszenia</label>
+            <input type="text" class="form-control" id="item_text" name="item_text" placeholder="Wpisz tytuł..." required>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="description">Opis ogłoszenia</label>
-            <textarea class="form-control" id="description" name="description" required></textarea>
+            <label for="description" class="form-label">Opis ogłoszenia</label>
+            <textarea class="form-control" id="description" name="description" placeholder="Dodaj opis..." required></textarea>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="category">Wybierz kategorię</label>
+            <label for="category" class="form-label">Wybierz kategorię</label>
             <select name="category" class="form-control" id="category" required>
                 {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
+                <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="mb-3">
-            <label class="form-label" for="price">Cena</label>
-            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+            <label for="price" class="form-label">Cena</label>
+            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" placeholder="Podaj cenę w PLN" required>
         </div>
-        <button type="submit" class="btn btn-success">Dodaj ogłoszenie</button>
+        <button type="submit" class="btn btn-primary w-100">Dodaj ogłoszenie</button>
     </form>
 </div>
 {% endblock %}

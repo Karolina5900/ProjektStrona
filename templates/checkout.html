@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="fw-bold mb-4">Twój koszyk</h1>
+    <h1 class="fw-bold mb-4">Podsumowanie zamówienia</h1>
 
     {% if cart_items %}
         <div class="row g-4">
@@ -13,7 +13,6 @@
                             <h5 class="card-title fw-bold">{{ item.olx.title }}</h5>
                             <p>{{ item.olx.description }}</p>
                             <p class="fw-bold">Cena: {{ item.olx.price }} PLN</p>
-                            <a href="{{ url_for('remove_from_cart', cart_item_id=item.id) }}" class="btn btn-danger">Usuń</a>
                         </div>
                     </div>
                 </div>
@@ -22,12 +21,15 @@
 
         <div class="mt-4 text-right">
             <h4 class="fw-bold">Całkowita suma: {{ total_price }} PLN</h4>
-            <a href="{{ url_for('checkout') }}" class="btn btn-success mt-3">Kupuję i płacę</a>
         </div>
+
+        <form method="POST">
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Płacę</button>
+            </div>
+        </form>
     {% else %}
         <p class="text-muted">Twój koszyk jest pusty.</p>
     {% endif %}
-    
-    <a href="/" class="btn btn-primary mt-3">Powrót na stronę główną</a>
 </div>
 {% endblock %}

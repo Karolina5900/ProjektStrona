@@ -115,6 +115,26 @@ def create_default_categories():
             db.session.add(category)
         db.session.commit()
 
+@app.route('/checkout', methods=['GET', 'POST'])
+@login_required
+def checkout():
+    
+    cart_items = CartItem.query.filter_by(user_id=current_user.get_id()).all()
+
+    
+    total_price = sum(item.olx.price for item in cart_items)
+
+    if request.method == 'POST':
+       
+        for item in cart_items:
+            db.session.delete(item)
+        db.session.commit()
+
+        return render_template('payment.html')
+
+    return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+
+
 @app.route('/add_to_cart/<int:ad_id>', methods=['POST'])
 @login_required
 def add_to_cart(ad_id):

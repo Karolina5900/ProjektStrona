@@ -56,6 +56,10 @@
                                 <span class="navbar-text me-3">Witaj, {{ current_user.email }}</span>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link btn btn-outline-warning" href="{{ url_for('view_cart') }}">Koszyk</a>
+
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link btn btn-outline-danger" href="{{ url_for('logout') }}">Wyloguj</a>
                             </li>
                         {% else %}

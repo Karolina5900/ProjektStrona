@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="fw-bold mb-4">Twój Koszyk</h1>
+    {% if cart_items %}
+        <div class="row g-4">
+            {% for item in cart_items %}
+                <div class="col-md-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">{{ item.olx.title }}</h5>
+                            <p>{{ item.olx.description }}</p>
+                            <p class="fw-bold">Cena: {{ item.olx.price }} PLN</p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <form method="post" action="{{ url_for('remove_from_cart', cart_item_id=item.id) }}">
+                                <button type="submit" class="btn btn-danger">Usuń z koszyka</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">Twój koszyk jest pusty.</p>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-primary">Wróć na stronę główną</a>
+    </div>
+</div>
+{% endblock %}

@@ -28,13 +28,21 @@
                 </p>
             </div>
 
-            {% if current_user.is_authenticated and current_user.get_id() == ad.user_id %}
+            {% if current_user.is_authenticated %}
             <div class="card-footer text-center">
-                <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}">
+                {% if not ad.sold and current_user.get_id() != ad.user_id %}
+                    <form method="post" action="{{ url_for('add_to_cart', ad_id=ad.id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-outline-primary">Dodaj do koszyka</button>
+                    </form>
+                {% endif %}
+                
+                {% if current_user.get_id() == ad.user_id %}
+                <form method="post" action="{{ url_for('toggle_sold', ad_id=ad.id) }}" class="d-inline">
                     <button type="submit" class="btn {% if ad.sold %}btn-outline-success{% else %}btn-outline-danger{% endif %}">
                         {% if ad.sold %}Zmień na dostępne{% else %}Zmień na sprzedane{% endif %}
                     </button>
                 </form>
+                {% endif %}
             </div>
             {% endif %}
         </div>

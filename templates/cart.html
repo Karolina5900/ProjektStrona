@@ -22,6 +22,11 @@
                 </div>
             {% endfor %}
         </div>
+
+        <!-- Wyświetlanie sumy -->
+        <div class="mt-4 text-right">
+            <h4 class="fw-bold">Całkowita suma: {{ total_price }} PLN</h4>
+        </div>
     {% else %}
         <p class="text-muted">Twój koszyk jest pusty.</p>
     {% endif %}

@@ -137,7 +137,9 @@ def add_to_cart(ad_id):
 @login_required
 def view_cart():
     cart_items = CartItem.query.filter_by(user_id=current_user.get_id()).all()
-    return render_template('cart.html', cart_items=cart_items)
+    total_price = sum(item.olx.price for item in cart_items)
+
+    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
 
 @app.route('/remove_from_cart/<int:cart_item_id>', methods=['POST'])
 @login_required

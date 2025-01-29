@@ -1,29 +1,17 @@
 # Projekt na zaliczenie
 
 Jest to prosta aplikacja we flasku przypominjąca OLX.
-Można się zalogować, dodawać ogłoszenia (tytuł, opis, kategoria i cena) oraz zmieniać ogłoszenie na sprzedane.
+Można się zalogować, dodawać ogłoszenia (tytuł, opis, kategoria i cena) oraz zmieniać ogłoszenie na sprzedane (jeśli jest się właścicielem ogłoszenia).
+Aplikacja umożliwia dodawanie ogłoszeń do koszyka oraz prosty zakup z wyliczoną ceną. 
 
 Wykonanie:
-Karolina Rosa
-Patrycja Zakrzewska
+Karolina Rosa 223540
+Patrycja Zakrzewska 223319
 
 ## Pierwsze uruchomienie 
 
 ```bash
 py -m venv venv
-venv\Scripts\activate.bat
+venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-Jeśli nie posiadasz narzędzie *pip* i korzystasz z Windowsa wykonaj te polecenia aby zainstalować narzędzie *pip* aby móc zainstalować wymagane biblioteki:
-
-```bash
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python get-pip.py
-```
-
-Po instalacji narzędzia *pip* sprawdź czy zainstalowało się ono poprawnie wykonując poniższą komendę:
-
-```bash
-python -m pip help
 ```
